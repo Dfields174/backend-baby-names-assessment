@@ -43,8 +43,28 @@ def extract_names(filename):
     the name-rank strings in alphabetical order.
     ['2006', 'Aaliyah 91', 'Aaron 57', 'Abagail 895', ...]
     """
+    with open(filename) as f:
+        text = f.read()
+    
     names = []
-    # +++your code here+++
+    pattern = r'Popularity in \d\d\d\d' 
+    year_match = re.search(pattern, text)
+    year = year_match.group(1)
+    names.append(year)
+    names_to_rank = {}
+    
+    pattern = r'<td>\d+</td><td>\w+</td><td>\w+</td>'
+    names_ranks = re.findall(pattern, text)
+    for rank_tuple in names_ranks:
+        rank, boy_name, girl_name = rank_tuple
+        if boy_name not in names_to_rank:
+            names_to_rank[boy_name] = rank
+        if girl_name not in names_to_rank:
+            names_to_rank[girl_name] = rank
+    
+    sorted_names = sorted(names_to_rank.items())
+    for name, rank in sorted_names:
+        names.append(f"{name} {rank}")
     return names
 
 
@@ -83,6 +103,16 @@ def main(args):
     # or to write the list to a summary file (e.g. `baby1990.html.summary`).
 
     # +++your code here+++
+    for filename in file_list:
+        names = (extract_names(filename))
+        text = '\n'.join(names)
+        if create_summary:
+            with open(filename + '.summary', 'w') as f:
+                f.write()
+        else:
+            print(text)
+        
+    
 
 
 if __name__ == '__main__':
